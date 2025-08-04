@@ -1,0 +1,7 @@
+## Interface: 11507
+## Title: hunteraddon
+## Notes: Displays a black box in the center
+## Author: You
+## Version: 1.0
+
+hunteraddon.lua
