@@ -38,6 +38,15 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 	box.texture:SetColorTexture(0, 0, 0, 1)
 
 	if enableaddon then
+		if UnitExists("pet") and UnitExists("pettarget") then
+			if UnitIsUnit("target", "pettarget") then
+				print("Your pet is attacking the same target as you.")
+			else
+				print("Your pet is attacking a different target.")
+			end
+		else
+			print("Your pet or its target does not exist.")
+		end
 		if IsInGroup() then
 			if UnitAffectingCombat("party1") then
 				box.texture:SetColorTexture(1, 1, 0, 1)
