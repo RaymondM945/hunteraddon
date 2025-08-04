@@ -38,14 +38,8 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 	box.texture:SetColorTexture(0, 0, 0, 1)
 
 	if enableaddon then
-		if UnitExists("pet") and UnitExists("pettarget") then
-			if UnitIsUnit("target", "pettarget") then
-				print("Your pet is attacking the same target as you.")
-			else
-				print("Your pet is attacking a different target.")
-			end
-		else
-			print("Your pet or its target does not exist.")
+		if UnitExists("pet") and UnitExists("pettarget") and not UnitIsUnit("target", "pettarget") then
+			print("Your pet is attacking a different target.")
 		end
 		if IsInGroup() then
 			if UnitAffectingCombat("party1") then
@@ -76,7 +70,14 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 								if channelspell then
 									print("You are currently channeling " .. channelspell .. ".")
 								else
-									if not name and usable then
+									if
+										UnitExists("pet")
+										and UnitExists("pettarget")
+										and not UnitIsUnit("target", "pettarget")
+									then
+										print("Your pet is attacking a different target.")
+										box.texture:SetColorTexture(0, 1, 1, 1)
+									elseif not name and usable then
 										print("You can cast " .. serpentStingName .. " on your target.")
 										box.texture:SetColorTexture(0, 1, 0, 1)
 									elseif not name2 and usable2 then
@@ -84,6 +85,8 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 										box.texture:SetColorTexture(0, 0, 1, 1)
 									elseif not IsAutoRepeatSpell("Shoot") then
 										box.texture:SetColorTexture(1, 0, 0, 1)
+									else
+										box.texture:SetColorTexture(1, 1, 0, 1)
 									end
 								end
 							end
