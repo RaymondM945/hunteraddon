@@ -68,12 +68,12 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 						else
 							if not UnitIsUnit("target", "party1target") then
 								box.texture:SetColorTexture(1, 1, 1, 1)
+							elseif not IsAutoRepeatSpell("Auto Shot") then
+								box.texture:SetColorTexture(1, 0, 0, 1)
 							elseif not name2 and usable2 then
 								box.texture:SetColorTexture(0, 0, 1, 1)
 							elseif not name and usable then
 								box.texture:SetColorTexture(0, 1, 0, 1)
-							elseif not IsAutoRepeatSpell("Shoot") then
-								box.texture:SetColorTexture(1, 0, 0, 1)
 							else
 								box.texture:SetColorTexture(1, 1, 0, 1)
 							end
