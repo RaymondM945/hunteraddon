@@ -1,5 +1,5 @@
 local enableaddon = true
-
+local useArcaneShot = true
 local box = CreateFrame("Frame", "MyBlackBox", UIParent)
 box:SetSize(25, 25)
 box:SetPoint("CENTER")
@@ -25,6 +25,23 @@ checkbox:SetScript("OnClick", function(self)
 	end
 end)
 
+local checkbox2 = CreateFrame("CheckButton", "MyAddonCheckbox2", UIParent, "UICheckButtonTemplate")
+checkbox2:SetSize(24, 24)
+checkbox2:SetPoint("TOP", checkbox, "BOTTOM", 0, -10) -- Position below the first checkbox
+checkbox2.text = checkbox2:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+checkbox2.text:SetPoint("LEFT", checkbox2, "RIGHT", 4, 0)
+checkbox2.text:SetText("Use Arcane Shot")
+checkbox2:SetChecked(useArcaneShot)
+checkbox2:SetScript("OnClick", function(self)
+	if self:GetChecked() then
+		print("Track Feign Death enabled")
+		useArcaneShot = true
+	else
+		print("Track Feign Death disabled")
+		useArcaneShot = false
+	end
+end)
+
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", function(self, event, addonName)
@@ -45,13 +62,15 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 			if UnitAffectingCombat("party1") then
 				box.texture:SetColorTexture(1, 1, 0, 1)
 
-				if UnitExists("party1target") and UnitIsVisible("party1target") then
+				if UnitExists("party1target") and UnitIsVisible("party1target") and not UnitIsDead("party1target") then
 					local currentHP = UnitHealth("party1target")
 					local maxHP = UnitHealthMax("party1target")
 
 					local hpPercent = (currentHP / maxHP) * 100
 
-					if hpPercent < 95 then
+					local feign = AuraUtil.FindAuraByName("Feign Death", "player", "HELPFUL")
+
+					if hpPercent < 95 and not feign then
 						local serpentStingName = GetSpellInfo(1978)
 						local huntersMarkName = GetSpellInfo(1130)
 						local name, _, _, _, _, _, sourceUnit =
@@ -61,6 +80,7 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 
 						local usable, noMana = IsUsableSpell(serpentStingName)
 						local usable2, noMana2 = IsUsableSpell(huntersMarkName)
+						local usable3, noMana3 = IsUsableSpell("Arcane Shot")
 						local channelspell = UnitChannelInfo("player")
 
 						if channelspell then
@@ -74,6 +94,8 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 								box.texture:SetColorTexture(0, 0, 1, 1)
 							elseif not name and usable then
 								box.texture:SetColorTexture(0, 1, 0, 1)
+							elseif not name3 and usable3 and useArcaneShot then
+								box.texture:SetColorTexture(0.5, 0, 1, 1)
 							else
 								box.texture:SetColorTexture(1, 1, 0, 1)
 							end
