@@ -1,6 +1,7 @@
 local enableaddon = true
 local useArcaneShot = true
 local MeleeMode = false
+local isFollowing, followName = false, nil
 local box = CreateFrame("Frame", "MyBlackBox", UIParent)
 box:SetSize(25, 25)
 box:SetPoint("CENTER")
@@ -56,8 +57,16 @@ end)
 
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
-f:SetScript("OnEvent", function(self, event, addonName)
-	if addonName == "MyAddon" then
+f:RegisterEvent("AUTOFOLLOW_BEGIN")
+f:RegisterEvent("AUTOFOLLOW_END")
+f:SetScript("OnEvent", function(self, event, arg1)
+	if event == "ADDON_LOADED" and arg1 == "MyAddon" then
+	elseif event == "AUTOFOLLOW_BEGIN" then
+		isFollowing, followName = true, arg1
+		print("Following:", followName)
+	elseif event == "AUTOFOLLOW_END" then
+		isFollowing, followName = false, nil
+		print("Follow ended")
 	end
 end)
 
@@ -88,10 +97,14 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 							else
 								if not UnitIsUnit("target", "party1target") then
 									box.texture:SetColorTexture(1, 1, 1, 1)
+								elseif not isFollowing then
+									box.texture:SetColorTexture(0, 1, 0, 1)
 								elseif not name4 and usable4 then
 									box.texture:SetColorTexture(0, 0, 1, 1)
 								elseif not IsCurrentSpell("Attack") then
 									box.texture:SetColorTexture(1, 0, 0, 1)
+								else
+									box.texture:SetColorTexture(1, 1, 0, 1)
 								end
 							end
 						else
