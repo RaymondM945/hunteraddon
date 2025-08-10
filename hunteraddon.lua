@@ -89,6 +89,8 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 
 					if hpPercent < 95 and not feign then
 						if MeleeMode then
+							local start, duration, enabled = GetSpellCooldown("Raptor Strike")
+
 							local usable4, noMana4 = IsUsableSpell("Raptor Strike")
 							local channelspell = UnitChannelInfo("player")
 
@@ -100,7 +102,12 @@ loopFrame:SetScript("OnUpdate", function(self, elapsed)
 									box.texture:SetColorTexture(0, 1, 0, 1)
 								elseif not IsCurrentSpell("Attack") then
 									box.texture:SetColorTexture(1, 0, 0, 1)
-								elseif usable4 and IsSpellInRange("Raptor Strike", "target") == 1 then
+								elseif
+									usable4
+									and IsSpellInRange("Raptor Strike", "target") == 1
+									and not noMana4
+									and start == 0
+								then
 									box.texture:SetColorTexture(0, 0, 1, 1)
 								else
 									box.texture:SetColorTexture(1, 1, 0, 1)
